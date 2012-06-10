@@ -13,8 +13,8 @@ IKVAnimation.prototype.render = function (ctx) {
     }
 };
 
-IKVAnimation.prototype.update = function(deltaTime) {
-    this.time = (this.time+deltaTime)%this.length;
+IKVAnimation.prototype.update = function (deltaTime) {
+    this.time = (this.time + deltaTime) % this.length;
     for (var i = 0; i < this.interpolations.length; i++) {
         this.interpolations[i].update(this.time);
     }
@@ -27,6 +27,7 @@ var IKVBone = function (name, rot, len) {
     this.rotation = 0;
     this.length = 50;
     this.children = [];
+    this.sprites = [];
     if (rot) {
         this.rotation = rot;
     }
@@ -35,18 +36,43 @@ var IKVBone = function (name, rot, len) {
     }
 };
 
+IKVBone.prototype.addSprite = function (image, texX, texY, texWidth, texHeight, x, y, rot) {
+    this.sprites.push({
+        image:image,
+        texX:texX,
+        texY:texY,
+        texWidth:texWidth,
+        texHeight:texHeight,
+        x:x,
+        y:y,
+        rot:rot
+    })
+}
+
 IKVBone.prototype.render = function (ctx) {
     ctx.rotate(this.rotation);
-    ctx.strokeStyle = 'black';
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(-5, 0);
-    ctx.lineTo(5, 0);
-    ctx.lineTo(0, this.length);
-    ctx.lineTo(-5, 0);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.strokeRect(-3, -3, 6, 6);
+    if (this.sprites.length == 0) {
+        ctx.strokeStyle = 'black';
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-5, 0);
+        ctx.lineTo(5, 0);
+        ctx.lineTo(0, this.length);
+        ctx.lineTo(-5, 0);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.strokeRect(-3, -3, 6, 6);
+    }
+    else {
+        for (var i = 0; i < this.sprites.length; i++) {
+            var sprite = this.sprites[i];
+            ctx.save();
+            ctx.rotate(sprite.rot);
+            ctx.translate(sprite.x,sprite.y);
+            ctx.drawImage(sprite.image,sprite.texX,sprite.texY,sprite.texWidth,sprite.texHeight,-sprite.texWidth/2,-sprite.texHeight/2,sprite.texWidth,sprite.texHeight);
+            ctx.restore();
+        }
+    }
     ctx.translate(0, this.length);
     for (var i = 0; i < this.children.length; i++) {
         ctx.save();
@@ -55,7 +81,7 @@ IKVBone.prototype.render = function (ctx) {
     }
 };
 
-var IKVRotationInterpolation = function(bone,startRotation,startTime,endRotation,endTime){
+var IKVRotationInterpolation = function (bone, startRotation, startTime, endRotation, endTime) {
     this.bone = bone;
     this.startRotation = startRotation;
     this.startTime = startTime;
@@ -63,10 +89,10 @@ var IKVRotationInterpolation = function(bone,startRotation,startTime,endRotation
     this.endTime = endTime;
 };
 
-IKVRotationInterpolation.prototype.update = function(time) {
-    if(time >= this.startTime && time <= this.endTime){
-        var delta = (time-this.startTime)/(this.endTime-this.startTime);
-        var deltaRot = this.endRotation-this.startRotation;
-        this.bone.rotation = this.startRotation+deltaRot*(delta);
+IKVRotationInterpolation.prototype.update = function (time) {
+    if (time >= this.startTime && time <= this.endTime) {
+        var delta = (time - this.startTime) / (this.endTime - this.startTime);
+        var deltaRot = this.endRotation - this.startRotation;
+        this.bone.rotation = this.startRotation + deltaRot * (delta);
     }
 }
