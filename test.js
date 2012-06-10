@@ -40,8 +40,14 @@ var main = function() {
     ikv.children.push(spine);
     ikv.children.push(pelvisLeft);
     ikv.children.push(pelvisRight);
-    ikv.interpolations.push(new IKVRotationInterpolation(upperArmRight,-90*Math.PI/180,0,0*Math.PI/180,5))
-    ikv.interpolations.push(new IKVRotationInterpolation(lowerArmRight,0*Math.PI/180,0,90*Math.PI/180,5))
+    ikv.interpolations.push(new IKVRotationInterpolation(upperArmRight,-90*Math.PI/180,0,0*Math.PI/180,2.5))
+    ikv.interpolations.push(new IKVRotationInterpolation(lowerArmRight,0*Math.PI/180,0,90*Math.PI/180,2.5))
+    ikv.interpolations.push(new IKVRotationInterpolation(upperArmRight,0*Math.PI/180,2.5,-90*Math.PI/180,5))
+    ikv.interpolations.push(new IKVRotationInterpolation(lowerArmRight,90*Math.PI/180,2.5,0*Math.PI/180,5))
+    ikv.interpolations.push(new IKVRotationInterpolation(spine,(180-5)*Math.PI/180,0,(180+5)*Math.PI/180,1.25))
+    ikv.interpolations.push(new IKVRotationInterpolation(spine,(180+5)*Math.PI/180,1.25,(180-5)*Math.PI/180,2.5))
+    ikv.interpolations.push(new IKVRotationInterpolation(spine,(180-5)*Math.PI/180,2.5,(180+5)*Math.PI/180,3.75))
+    ikv.interpolations.push(new IKVRotationInterpolation(spine,(180+5)*Math.PI/180,3.75,(180-5)*Math.PI/180,5))
     setInterval(function(){
         ctx.clearRect(0,0,500,500);
         ctx.save();
